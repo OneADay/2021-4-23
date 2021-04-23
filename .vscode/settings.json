@@ -1,0 +1,5 @@
+{
+    "files.exclude": {
+        "**/*.less.d.ts": true
+    }
+}

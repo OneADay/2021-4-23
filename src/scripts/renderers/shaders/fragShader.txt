@@ -1,0 +1,18 @@
+varying vec2 vUv;
+varying vec3 vNormal;
+uniform float delta;
+
+void main() {
+
+	vec2 center = vec2(0.5, 0.5);
+	float radius = 1.0;
+	
+	vec2 p = vec2((vUv.x - center.x) / radius, (vUv.y - center.y) / radius);
+	float radialGradient = sqrt(dot(p, p));
+	float r = 0.0;
+	float g = 1.0 - delta;
+	float b = delta;
+	float a = 0.5 - radialGradient;
+
+	gl_FragColor = vec4(r, g, b, a);
+}

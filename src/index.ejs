@@ -1,0 +1,15 @@
+<html>
+    <head>
+        <%
+            var options = htmlWebpackPlugin.options;
+        %>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> <!--320-->
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta property="og:image" content="thumbnail.gif" />
+        <title><%- options.title %></title>
+    </head>
+    <body>
+        <script src="./libs/ccapture/CCapture.all.min.js"></script>
+    </body>
+</html>

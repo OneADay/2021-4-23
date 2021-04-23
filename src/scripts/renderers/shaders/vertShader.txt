@@ -1,0 +1,28 @@
+varying vec2 vUv;
+varying vec3 vNormal;
+uniform float delta;
+
+void main() {	
+	vUv = uv;
+	vNormal = normalize(normalMatrix * normal);
+	
+	vec2 center = vec2(0.5, 0.5);
+	float radius = 1.0;
+
+	vec2 pos = vec2((vUv.x - center.x) / radius, (vUv.y - center.y) / radius);
+	//float radialGradient = sqrt(dot(pos, pos));
+	float radialGradient = sqrt(dot(pos, pos));
+
+	//1 - sqrt(1 - pow(x, 2))
+
+	vec3 p = position;
+	//p.y += sin(delta) * delta;
+	//p.x += 1.0 - sqrt(1.0 - pow(delta, 2.0));
+	//p.y += 1.0 - sqrt(1.0 - pow(delta, 2.0));
+	//p.z += 1.0 - sqrt(1.0 - pow(delta, 2.0));
+
+	vec4 mvPosition = modelViewMatrix * vec4(p, 1.0);
+	vec4 position = projectionMatrix * mvPosition;
+	
+	gl_Position = position;
+}
