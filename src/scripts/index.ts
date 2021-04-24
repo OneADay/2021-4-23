@@ -44,13 +44,14 @@ class App {
         if (this.debug.formatSelect.value == 'thumbnail') {
             saveThumbnail(this.renderer.canvas);
         } else {
-            if (this.recorder) {
-                this.recorder.setCanvas(this.renderer.canvas);
-                this.recorder.start();
-            }
-
             this.renderer.play();
             this.renderer.setCompleteCallback(() => this.handleComplete());
+            if (this.recorder) {
+                this.recorder.setCanvas(this.renderer.canvas);
+                setTimeout(() => {
+                    this.recorder.start();
+                }, 20);
+            }
         }
     }
 

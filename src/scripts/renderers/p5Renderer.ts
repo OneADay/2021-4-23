@@ -7,6 +7,8 @@ const srandom = seedrandom('b');
 
 let squares = [];
 
+let tl;
+
 let image;
 let dw = 0, dh = 0;
 let freq;
@@ -15,6 +17,7 @@ let px = [];
 
 export default class P5Renderer implements BaseRenderer{
 
+    recording: boolean = false;
     colors = ['#D1CDC4', '#340352', '#732A70', '#FF6EA7', '#FFE15F'];
     backgroundColor = '#FFFFFF';
 
@@ -43,7 +46,6 @@ export default class P5Renderer implements BaseRenderer{
         }
 
         new P5(sketch);
-
     }
 
     protected setup(s) {
@@ -55,48 +57,58 @@ export default class P5Renderer implements BaseRenderer{
 
         s.background(0, 0, 0, 255);
 
+        tl = gsap.timeline({
+            //paused: true,
+            repeat: -1,
+            onUpdate: () => {
+                if (tl.time() === 4) {
+                    if (this.completeCallback) {
+                        this.completeCallback();
+                    }
+                }
+        }});
+
+        tl.timeScale(0.5);
+
+        s.noiseSeed(99);
         this.size = (s.width / 30);
 
         for (let i = 0; i < 20; i++) {
             for (let j = 0; j < 20; j++) {
                 let x = i * this.size;
                 let y = j * this.size;
-                squares.push({ox: x, oy: y, x: x, y: y});
+
+                let square = {ox: x, oy: y, x: x, y: y, r: 0, g: 0, b: 0, a: 0, scale: 0};
+                squares.push(square);
+
+                let _tl = gsap.timeline({repeat: -1});
+                _tl.set(square, {scale: 0, y: y, r: 100, g: 200, b: 255, a: 255});
+                _tl.to(square, {scale: 10, r: 255, g: 255, b: 255, a: 255, duration: 0.5, ease: 'none'});
+                _tl.to(square, {y: '-=70', scale: 0, duration: 0.5, ease: 'pow2.inout'}, 0.5);
+                _tl.to(square, {r: 255, g: 100, b: 200, a: 255, scale: 0, duration: 0.25, ease: 'pow.in'}, 0.5);
+                _tl.to(square, {r: 255, g: 100, b: 200, a: 0, duration: 0.25, ease: 'pow.in'}, 0.75);
+
+                let offset = 2 * s.noise(x, y);                
+                tl.add(_tl, offset);
             }
         }
-
     }
 
     protected draw(s) {
-
         if (this.animating) { 
             s.background(0, 0, 0, 50);
             this.delta+= 0.01;
 
-            //s.noLoop();
             s.translate(this.width / 5.5, this.width / 5.5);
             for (let i = 0; i < squares.length; i++) {
-               let square = squares[i];
-
-               let scale = this.size * this.periodicFunction(this.delta-this.offset(square.x,square.y));//s.noise(square.x + this.delta, square.y + this.delta);
-               let yoffset = 0;
-
-               s.noStroke();
-               s.fill(255, 255, 255, 255);
-               s.rect(square.x - (scale / 2), square.y - (scale/ 2) - yoffset, scale, scale);
+                let square = squares[i];
+                let scale = square.scale;
+                s.noStroke();
+                //s.fill(255, 255, 255, 255);
+                s.fill(square.r, square.g, square.b, square.a);
+                s.rect(square.x - (scale / 2), square.y - (scale/ 2), scale, scale);
            }
-
         }
-    }
-
-    protected periodicFunction(p)
-    {
-      return 1.0 * this.s.sin(this.s.TWO_PI * p);
-    }
-    
-    protected offset(x, y)
-    {
-      return this.s.noise(x, y);
     }
 
     public render() {
@@ -104,13 +116,10 @@ export default class P5Renderer implements BaseRenderer{
     }
 
     public play() {
+        this.recording = true;
         this.animating = true;
-        setTimeout(() => {
-            console.log('go');
-            if (this.completeCallback) {
-                this.completeCallback();
-            }
-        }, 10000);
+        tl.time(2);
+        tl.tweenTo(4);
     }
 
     public stop() {
