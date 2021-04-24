@@ -68,7 +68,7 @@ export default class P5Renderer implements BaseRenderer{
                 }
         }});
 
-        tl.timeScale(0.5);
+        //tl.timeScale(0.5);
 
         s.noiseSeed(99);
         this.size = (s.width / 30);
